@@ -86,9 +86,11 @@ public class QuineErrorListener extends BaseErrorListener {
     public static void printErrors() {
         List<Message> errorList = new ArrayList<Message>(QuineErrorListener.errors);
         errorList.sort(Comparator.comparing(Message::getColNo));
-        System.err.print("ERRORS(" + QuineErrorListener.errors.size() + "):\n");
-        for (Message error : errorList) {
-            System.err.println(error);
+        if (!QuineErrorListener.errors.isEmpty()) {
+            System.err.print("ERRORS(" + QuineErrorListener.errors.size() + "):\n");
+            for (Message error : errorList) {
+                System.err.println(error);
+            }
         }
     }
 
@@ -178,7 +180,7 @@ public class QuineErrorListener extends BaseErrorListener {
             if (offTokPos == 0) {
                 errorMsg = "First character " + this.getSurroundingText(parser.getTokenStream().getText(), offTokPos) + " is invalid, check to make sure your parentheses are balanced and your input is as well.";
             } else {
-                Token prevOffTok = parser.getTokenStream().get(offTok.getCharPositionInLine() - 1);
+                Token prevOffTok = parser.getTokenStream().get(offTok.getCharPositionInLine() - 2);
                 int prevTokId = prevOffTok.getType();
                 String surroundingText = this.getSurroundingText(parser.getTokenStream().getText(), offTokPos);
 

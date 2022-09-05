@@ -48,6 +48,16 @@ public interface QuineListener extends ParseTreeListener {
 	 */
 	void exitPropWff(QuineParser.PropWffContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link QuineParser#propOuterWff}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropOuterWff(QuineParser.PropOuterWffContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuineParser#propOuterWff}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropOuterWff(QuineParser.PropOuterWffContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link QuineParser#propNegRule}.
 	 * @param ctx the parse tree
 	 */
@@ -107,4 +117,54 @@ public interface QuineListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPropExclusiveOrRule(QuineParser.PropExclusiveOrRuleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuineParser#propOuterAndRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropOuterAndRule(QuineParser.PropOuterAndRuleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuineParser#propOuterAndRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropOuterAndRule(QuineParser.PropOuterAndRuleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuineParser#propOuterOrRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropOuterOrRule(QuineParser.PropOuterOrRuleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuineParser#propOuterOrRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropOuterOrRule(QuineParser.PropOuterOrRuleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuineParser#propOuterImpRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropOuterImpRule(QuineParser.PropOuterImpRuleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuineParser#propOuterImpRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropOuterImpRule(QuineParser.PropOuterImpRuleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuineParser#propOuterBicondRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropOuterBicondRule(QuineParser.PropOuterBicondRuleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuineParser#propOuterBicondRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropOuterBicondRule(QuineParser.PropOuterBicondRuleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QuineParser#propOuterExclusiveOrRule}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropOuterExclusiveOrRule(QuineParser.PropOuterExclusiveOrRuleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QuineParser#propOuterExclusiveOrRule}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropOuterExclusiveOrRule(QuineParser.PropOuterExclusiveOrRuleContext ctx);
 }

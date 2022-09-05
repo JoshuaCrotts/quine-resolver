@@ -64,6 +64,18 @@ public class QuineBaseListener implements QuineListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPropOuterWff(QuineParser.PropOuterWffContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPropOuterWff(QuineParser.PropOuterWffContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPropNegRule(QuineParser.PropNegRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -131,6 +143,66 @@ public class QuineBaseListener implements QuineListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPropExclusiveOrRule(QuineParser.PropExclusiveOrRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPropOuterAndRule(QuineParser.PropOuterAndRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPropOuterAndRule(QuineParser.PropOuterAndRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPropOuterOrRule(QuineParser.PropOuterOrRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPropOuterOrRule(QuineParser.PropOuterOrRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPropOuterImpRule(QuineParser.PropOuterImpRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPropOuterImpRule(QuineParser.PropOuterImpRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPropOuterBicondRule(QuineParser.PropOuterBicondRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPropOuterBicondRule(QuineParser.PropOuterBicondRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPropOuterExclusiveOrRule(QuineParser.PropOuterExclusiveOrRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPropOuterExclusiveOrRule(QuineParser.PropOuterExclusiveOrRuleContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

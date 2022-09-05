@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-/**
- *
- */
 public final class QuineTree {
 
     /**
@@ -20,6 +17,12 @@ public final class QuineTree {
      * Original WffTree formula to evaluate.
      */
     private WffTree wffTree;
+
+    /**
+     * For representation purposes, we keep a reference of the wff when "truthified", i.e.,
+     * atoms are replaced with T or F.
+     */
+    private WffTree truthifiedWffTree;
 
     /**
      * AtomNode to replace with true or false nodes depending on the interpretation.
@@ -60,6 +63,7 @@ public final class QuineTree {
             this.depth = _depth;
             this.atomNode = this.atomNodeList.get(0);
             this.replaceAtoms();
+            this.truthifiedWffTree = this.wffTree.copy();
             this.evaluateQuineTree();
         } else {
             this.wffTree = _wffTree;
@@ -103,17 +107,11 @@ public final class QuineTree {
     private void evaluateWffHelper(WffTree _wffTree) {
         for (int i = 0; i < _wffTree.getChildrenSize(); i++) {
             WffTree ch = _wffTree.getChild(i);
-            if (ch.isAnd()) {
-                this.evaluateConjunction(i, _wffTree, ch);
-            } else if (ch.isOr()) {
-                this.evaluateDisjunction(i, _wffTree, ch);
-            } else if (ch.isImp()) {
-                this.evaluateImplication(i, _wffTree, ch);
-            } else if (ch.isBicond()) {
-                this.evaluateBiconditional(i, _wffTree, ch);
-            } else if (ch.isNegation()) {
-                this.evaluateNegation(i, _wffTree, ch);
-            }
+            if (ch.isAnd()) { this.evaluateConjunction(i, _wffTree, ch); }
+            else if (ch.isOr()) { this.evaluateDisjunction(i, _wffTree, ch); }
+            else if (ch.isImp()) { this.evaluateImplication(i, _wffTree, ch); }
+            else if (ch.isBicond()) { this.evaluateBiconditional(i, _wffTree, ch); }
+            else if (ch.isNegation()) { this.evaluateNegation(i, _wffTree, ch); }
             this.evaluateWffHelper(ch);
         }
     }
@@ -129,15 +127,10 @@ public final class QuineTree {
      * @param _conjTree - conjunction node itself.
      */
     private void evaluateConjunction(int _idx, WffTree _parent, WffTree _conjTree) {
-        if (_conjTree.getChild(0).isTrue()) {
-            _parent.setChild(_idx, _conjTree.getChild(1));
-        } else if (_conjTree.getChild(1).isTrue()) {
-            _parent.setChild(_idx, _conjTree.getChild(0));
-        } else if (_conjTree.getChild(0).isFalse()) {
-            _parent.setChild(_idx, _conjTree.getChild(0));
-        } else if (_conjTree.getChild(1).isFalse()) {
-            _parent.setChild(_idx, _conjTree.getChild(1));
-        }
+        if (_conjTree.getChild(0).isTrue()) { _parent.setChild(_idx, _conjTree.getChild(1)); }
+        else if (_conjTree.getChild(1).isTrue()) { _parent.setChild(_idx, _conjTree.getChild(0)); }
+        else if (_conjTree.getChild(0).isFalse()) { _parent.setChild(_idx, _conjTree.getChild(0)); }
+        else if (_conjTree.getChild(1).isFalse()) { _parent.setChild(_idx, _conjTree.getChild(1)); }
     }
 
     /**
@@ -150,15 +143,10 @@ public final class QuineTree {
      * @param _disjTree - disjunction node itself.
      */
     private void evaluateDisjunction(int _idx, WffTree _parent, WffTree _disjTree) {
-        if (_disjTree.getChild(0).isTrue()) {
-            _parent.setChild(_idx, _disjTree.getChild(0));
-        } else if (_disjTree.getChild(1).isTrue()) {
-            _parent.setChild(_idx, _disjTree.getChild(1));
-        } else if (_disjTree.getChild(0).isFalse()) {
-            _parent.setChild(_idx, _disjTree.getChild(1));
-        } else if (_disjTree.getChild(1).isFalse()) {
-            _parent.setChild(_idx, _disjTree.getChild(0));
-        }
+        if (_disjTree.getChild(0).isTrue()) { _parent.setChild(_idx, _disjTree.getChild(0)); }
+        else if (_disjTree.getChild(1).isTrue()) { _parent.setChild(_idx, _disjTree.getChild(1)); }
+        else if (_disjTree.getChild(0).isFalse()) { _parent.setChild(_idx, _disjTree.getChild(1)); }
+        else if (_disjTree.getChild(1).isFalse()) { _parent.setChild(_idx, _disjTree.getChild(0)); }
     }
 
     /**
@@ -188,10 +176,10 @@ public final class QuineTree {
     /**
      * We can do one of a few things with the biconditional:
      * 1. If we have (P iff P), then that is true.
-     * 2. (True iff True) is true.
-     * 3. (False iff False) is true.
-     * Anything else needs to be broken down into a conjunction of implications
-     * .
+     * 2. (True iff True) OR (False iff False) is true.
+     * 3. (P iff True) is P
+     * 4. (P iff False) is ~P
+     *
      * @param _idx
      * @param _parent
      * @param _bicondTree
@@ -201,10 +189,14 @@ public final class QuineTree {
         if (_bicondTree.getChild(0).stringEquals(_bicondTree.getChild(1))) {
             _parent.setChild(_idx, new TruthNode());
         } else {
-            // Otherwise, replace it with a conjunction of implications.
+            // Otherwise, check each operand. A true operand resolves to the other, and a false
+            // operand resolves to the other, negated.
             WffTree lhs = _bicondTree.getChild(0);
             WffTree rhs = _bicondTree.getChild(1);
-            _parent.setChild(_idx, new AndNode(new ImpNode(lhs, rhs), new ImpNode(rhs, lhs)));
+            if (lhs.isTrue()) { _parent.setChild(_idx, rhs); }
+            else if (rhs.isTrue()) { _parent.setChild(_idx, lhs); }
+            else if (lhs.isFalse()) { _parent.setChild(_idx, new NegNode(rhs)); }
+            else { _parent.setChild(_idx, new NegNode(lhs)); }
         }
     }
 
@@ -217,11 +209,8 @@ public final class QuineTree {
      * @param _negTree - negation node itself.
      */
     private void evaluateNegation(int _idx, WffTree _parent, WffTree _negTree) {
-        if (_negTree.getChild(0).isTrue()) {
-            _parent.setChild(_idx, new FalseNode());
-        } else if (_negTree.getChild(0).isFalse()) {
-            _parent.setChild(_idx, new TruthNode());
-        }
+        if (_negTree.getChild(0).isTrue()) { _parent.setChild(_idx, new FalseNode()); }
+        else if (_negTree.getChild(0).isFalse()) { _parent.setChild(_idx, new TruthNode()); }
     }
 
     /**
@@ -274,7 +263,7 @@ public final class QuineTree {
         while (!queue.isEmpty()) {
             WffTree wff = queue.poll();
             // If the wff is a T/F node then it won't have children, but neither do
-            // atoms so we have to make sure it's not true or false before returning false.
+            // atoms, so we have to make sure it's not true or false before returning false.
             if (wff.getChildren().isEmpty() && !wff.isTrue() && !wff.isFalse()) { return false; }
             queue.addAll(wff.getChildren());
         }
@@ -315,6 +304,7 @@ public final class QuineTree {
      * toString() of the QuineTree is null then nothing is added. Otherwise, a new line is appended.
      *
      * @param _quineTree
+     * @param sb
      */
     private void printQuineTreeHelper(QuineTree _quineTree, StringBuilder sb) {
         if (_quineTree == null) { return; }
@@ -332,9 +322,10 @@ public final class QuineTree {
     public String toString() {
         if (this.depth <= 0 || this.atomNode == null) { return null; }
         // Tabs, I followed by "depth" ticks, (, atom, interpretation, ), formula.
-        return String.format("(%s/%b), %s",
+        return String.format("(%s/%b), %s, %s",
                 this.atomNode.getStringRep(),
                 this.interpretation,
+                this.truthifiedWffTree.getStringRep(),
                 this.wffTree.getStringRep());
     }
 

@@ -26,7 +26,6 @@ fragment IMP_LIT: 'IMPLIES';
 fragment BICOND_LIT: 'IFF';
 fragment NEG_LIT: 'NOT';
 fragment XOR_LIT: 'XOR';
-fragment IDENTITY_LIT: 'EQUIVALENT';
 
 /* Other symbols. */
 OPEN_PAREN : '(';
@@ -39,10 +38,9 @@ IMP     : '->' | '→' | '⇒' | '⊃' | '>' | IMP_LIT;
 BICOND  : '<->' | '⇔' | '≡' | '↔' | '<>' | BICOND_LIT ;
 NEG     : '˜' | '\u007e' | '\uff5e' | '\u223c' | '¬' | '!' | '-' | NEG_LIT ;
 XOR     : '⊕' | '⊻' | '≢' | '⩒' | '↮' | XOR_LIT ;
-IDENTITY: '=' | IDENTITY_LIT;
 
 /* Atoms. */
-ATOM: UPPER_CASE_LTR;
+ATOM: UPPER_CASE_LTR | LOWER_CASE_LTR;
 
 //=========== Parser rules. ==============
 
@@ -52,7 +50,7 @@ program: (propositionalWff EOF);
 atom: ATOM;
 
 /* Starting rule. */
-propositionalWff: propWff;
+propositionalWff: propWff | propOuterWff;
 
 propWff: atom
     | propNegRule
@@ -62,9 +60,22 @@ propWff: atom
     | propBicondRule
     | propExclusiveOrRule;
 
+propOuterWff: atom
+	| propOuterAndRule
+	| propOuterOrRule
+	| propOuterImpRule
+	| propOuterBicondRule
+	| propOuterExclusiveOrRule;
+
 propNegRule: NEG propWff;
 propAndRule: OPEN_PAREN propWff AND propWff CLOSE_PAREN;
 propOrRule : OPEN_PAREN propWff OR propWff CLOSE_PAREN;
 propImpRule: OPEN_PAREN propWff IMP propWff CLOSE_PAREN;
 propBicondRule: OPEN_PAREN propWff BICOND propWff CLOSE_PAREN;
 propExclusiveOrRule: OPEN_PAREN propWff XOR propWff CLOSE_PAREN;
+
+propOuterAndRule: propWff AND propWff;
+propOuterOrRule: propWff OR propWff;
+propOuterImpRule: propWff IMP propWff;
+propOuterBicondRule: propWff BICOND propWff;
+propOuterExclusiveOrRule: propWff XOR propWff;

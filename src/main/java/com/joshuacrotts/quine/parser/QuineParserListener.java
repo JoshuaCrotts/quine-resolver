@@ -34,7 +34,7 @@ public class QuineParserListener extends QuineBaseListener {
     /**
      * Stack to keep track of all in-progress subwffs.
      */
-    private final Stack<WffTree> treeRoots;
+    private final Stack<WffTree> TREE_ROOTS;
 
     /**
      * Current root of the wff tree being constructed.
@@ -50,7 +50,7 @@ public class QuineParserListener extends QuineBaseListener {
     public QuineParserListener(QuineParser _QuineParser) {
         super();
         this.PARSE_TREE = new ParseTreeProperty<>();
-        this.treeRoots = new Stack<>();
+        this.TREE_ROOTS = new Stack<>();
     }
 
     @Override
@@ -100,7 +100,7 @@ public class QuineParserListener extends QuineBaseListener {
 
         String symbol = ctx.NEG().getText();
         NegNode negNode = new NegNode(symbol);
-        this.treeRoots.push(this.wffTree);
+        this.TREE_ROOTS.push(this.wffTree);
         this.wffTree = negNode;
     }
 
@@ -115,7 +115,7 @@ public class QuineParserListener extends QuineBaseListener {
     public void enterPropAndRule(QuineParser.PropAndRuleContext ctx) {
         if (QuineErrorListener.sawError()) return;
         AndNode andNode = new AndNode(ctx.AND().getText());
-        this.treeRoots.push(this.wffTree);
+        this.TREE_ROOTS.push(this.wffTree);
         this.wffTree = andNode;
     }
 
@@ -126,10 +126,24 @@ public class QuineParserListener extends QuineBaseListener {
     }
 
     @Override
+    public void enterPropOuterAndRule(QuineParser.PropOuterAndRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        AndNode andNode = new AndNode(ctx.AND().getText());
+        this.TREE_ROOTS.push(this.wffTree);
+        this.wffTree = andNode;
+    }
+
+    @Override
+    public void exitPropOuterAndRule(QuineParser.PropOuterAndRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        this.popTreeRoot();
+    }
+
+    @Override
     public void enterPropOrRule(QuineParser.PropOrRuleContext ctx) {
         if (QuineErrorListener.sawError()) return;
         OrNode orNode = new OrNode(ctx.OR().getText());
-        this.treeRoots.push(this.wffTree);
+        this.TREE_ROOTS.push(this.wffTree);
         this.wffTree = orNode;
     }
 
@@ -140,10 +154,24 @@ public class QuineParserListener extends QuineBaseListener {
     }
 
     @Override
+    public void enterPropOuterOrRule(QuineParser.PropOuterOrRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        OrNode orNode = new OrNode(ctx.OR().getText());
+        this.TREE_ROOTS.push(this.wffTree);
+        this.wffTree = orNode;
+    }
+
+    @Override
+    public void exitPropOuterOrRule(QuineParser.PropOuterOrRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        this.popTreeRoot();
+    }
+
+    @Override
     public void enterPropImpRule(QuineParser.PropImpRuleContext ctx) {
         if (QuineErrorListener.sawError()) return;
         ImpNode impNode = new ImpNode(ctx.IMP().getText());
-        this.treeRoots.push(this.wffTree);
+        this.TREE_ROOTS.push(this.wffTree);
         this.wffTree = impNode;
     }
 
@@ -154,10 +182,24 @@ public class QuineParserListener extends QuineBaseListener {
     }
 
     @Override
+    public void enterPropOuterImpRule(QuineParser.PropOuterImpRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        ImpNode impNode = new ImpNode(ctx.IMP().getText());
+        this.TREE_ROOTS.push(this.wffTree);
+        this.wffTree = impNode;
+    }
+
+    @Override
+    public void exitPropOuterImpRule(QuineParser.PropOuterImpRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        this.popTreeRoot();
+    }
+
+    @Override
     public void enterPropBicondRule(QuineParser.PropBicondRuleContext ctx) {
         if (QuineErrorListener.sawError()) return;
         BicondNode bicondNode = new BicondNode(ctx.BICOND().getText());
-        this.treeRoots.push(this.wffTree);
+        this.TREE_ROOTS.push(this.wffTree);
         this.wffTree = bicondNode;
     }
 
@@ -168,15 +210,43 @@ public class QuineParserListener extends QuineBaseListener {
     }
 
     @Override
+    public void enterPropOuterBicondRule(QuineParser.PropOuterBicondRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        BicondNode bicondNode = new BicondNode(ctx.BICOND().getText());
+        this.TREE_ROOTS.push(this.wffTree);
+        this.wffTree = bicondNode;
+    }
+
+    @Override
+    public void exitPropOuterBicondRule(QuineParser.PropOuterBicondRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        this.popTreeRoot();
+    }
+
+    @Override
     public void enterPropExclusiveOrRule(QuineParser.PropExclusiveOrRuleContext ctx) {
         if (QuineErrorListener.sawError()) return;
         ExclusiveOrNode xorNode = new ExclusiveOrNode(ctx.XOR().getText());
-        this.treeRoots.push(this.wffTree);
+        this.TREE_ROOTS.push(this.wffTree);
         this.wffTree = xorNode;
     }
 
     @Override
     public void exitPropExclusiveOrRule(QuineParser.PropExclusiveOrRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        this.popTreeRoot();
+    }
+
+    @Override
+    public void enterPropOuterExclusiveOrRule(QuineParser.PropOuterExclusiveOrRuleContext ctx) {
+        if (QuineErrorListener.sawError()) return;
+        ExclusiveOrNode xorNode = new ExclusiveOrNode(ctx.XOR().getText());
+        this.TREE_ROOTS.push(this.wffTree);
+        this.wffTree = xorNode;
+    }
+
+    @Override
+    public void exitPropOuterExclusiveOrRule(QuineParser.PropOuterExclusiveOrRuleContext ctx) {
         if (QuineErrorListener.sawError()) return;
         this.popTreeRoot();
     }
@@ -199,7 +269,7 @@ public class QuineParserListener extends QuineBaseListener {
      * reassign the links.
      */
     private void popTreeRoot() {
-        WffTree oldRoot = this.treeRoots.pop(); // Remove the old root from the stack.
+        WffTree oldRoot = this.TREE_ROOTS.pop(); // Remove the old root from the stack.
         oldRoot.addChild(this.wffTree); // Add the current running-node as a child of the old root.
         this.wffTree = oldRoot; // Reassign the root to be the old one.
     }
