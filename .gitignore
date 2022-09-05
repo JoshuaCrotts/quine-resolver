@@ -1,2 +1,4 @@
 target/*
 .idea/*
+QuineResolver.iml
+*.DS_Store
