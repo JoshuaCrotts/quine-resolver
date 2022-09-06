@@ -10,29 +10,29 @@ import com.joshuacrotts.quine.utils.ArgParser;
 public class QuineResolver {
 
     public static void main(String[] args) {
-        if (args.length < 2 && !ArgParser.isArgPresent("-h", args)) {
-            ArgParser.printErrorAndExit("Require at least 3 arguments or -h flag; got " + args.length);
-        } else if (ArgParser.isArgPresent("-h", args)) {
+        if (args.length < 2 && !ArgParser.isArgPresent("-help", args)) {
+            ArgParser.printErrorAndExit("Require at least 3 arguments or -help flag; got " + args.length);
+        } else if (ArgParser.isArgPresent("-help", args)) {
             printQuineResolverHelp();
             ArgParser.printArgUsage();
             System.exit(0);
-        } else if (!ArgParser.isArgPresent("-i", args)) {
-            ArgParser.printErrorAndExit("Missing required option: -i");
-        } else if (ArgParser.getArgIndex("-i", args) == args.length - 1) {
-            ArgParser.printErrorAndExit("Argument option -i cannot be last argument");
+        } else if (!ArgParser.isArgPresent("-input", args)) {
+            ArgParser.printErrorAndExit("Missing required option: -input");
+        } else if (ArgParser.getArgIndex("-input", args) == args.length - 1) {
+            ArgParser.printErrorAndExit("Argument option -input cannot be last argument");
         } else {
-            int idx = ArgParser.getArgIndex("-i", args);
+            int idx = ArgParser.getArgIndex("-input", args);
             WffTree tree = QuineParserAdapter.getAbstractSyntaxTree(args[idx + 1]);
             if (tree != null) {
                 QuineTree qt = new QuineTree(tree, tree.getAtoms());
-                if (ArgParser.isArgPresent("-c", args)) {
+                if (ArgParser.isArgPresent("-console", args)) {
                     System.out.println(qt.printQuineTree());
                 }
-                if (ArgParser.isArgPresent("-p", args)) {
-                    int pdfIdx = ArgParser.getArgIndex("-p", args);
+                if (ArgParser.isArgPresent("-output", args)) {
+                    int pdfIdx = ArgParser.getArgIndex("-output", args);
                     String outFileName = args[pdfIdx + 1];
                     if (!outFileName.endsWith("pdf")) {
-                        ArgParser.printErrorAndExit("Output file to -p must be a pdf file, but got " + outFileName);
+                        ArgParser.printErrorAndExit("Output file to -output must be a pdf file, but got " + outFileName);
                     } else {
                         PdfPrinter printer = new PdfQuineTreePrinter(qt, outFileName);
                         printer.outputToFile();

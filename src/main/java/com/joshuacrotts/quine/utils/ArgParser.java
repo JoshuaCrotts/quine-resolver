@@ -17,11 +17,11 @@ public abstract class ArgParser {
     }
 
     public static void printArgUsage() {
-        System.out.println("usage: quine-resolver.jar -i <input schema> [-hpc]");
-        System.out.println("\t-i <arg>\tinput schema");
-        System.out.println("\t-h\t\t\thelp menu");
-        System.out.println("\t-c\t\t\toutput to stdout");
-        System.out.println("\t-p <arg>\toutput to LaTeX PDF");
+        System.out.println("usage: quine-resolver.jar -i <input schema> [-help | -output | -console]");
+        System.out.println("\t-input <arg>\tinput schema");
+        System.out.println("\t-help\t\t\thelp menu");
+        System.out.println("\t-console\t\t\toutput to stdout");
+        System.out.println("\t-output <arg>\toutput to LaTeX PDF");
     }
 
     public static void printErrorAndExit(String errMsg) {

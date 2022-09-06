@@ -107,11 +107,12 @@ public final class QuineTree {
     private void evaluateWffHelper(WffTree _wffTree) {
         for (int i = 0; i < _wffTree.getChildrenSize(); i++) {
             WffTree ch = _wffTree.getChild(i);
-            if (ch.isNegation()) { this.evaluateNegation(i, _wffTree, ch); }
-            else if (ch.isAnd()) { this.evaluateConjunction(i, _wffTree, ch); }
+
+            if (ch.isAnd()) { this.evaluateConjunction(i, _wffTree, ch); }
             else if (ch.isOr()) { this.evaluateDisjunction(i, _wffTree, ch); }
             else if (ch.isImp()) { this.evaluateImplication(i, _wffTree, ch); }
             else if (ch.isBicond()) { this.evaluateBiconditional(i, _wffTree, ch); }
+            else if (ch.isNegation()) { this.evaluateNegation(i, _wffTree, ch); }
 
             this.evaluateWffHelper(ch);
         }
@@ -203,7 +204,8 @@ public final class QuineTree {
 
     /**
      * Evaluates a negation node in the tree. Negations only affect Truth and FalseNodes,
-     * such that TruthNodes become FalseNodes, and vice versa.
+     * such that TruthNodes become FalseNodes, and vice versa. This also affects double negations
+     * and negations over atoms.
      *
      * @param _idx - index to replace if a negation is found on a Truth or FalseNode.
      * @param _parent - parent of negation node.
