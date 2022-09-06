@@ -1,4 +1,4 @@
-package com.joshuacrotts.quine;
+package com.joshuacrotts.quine.output;
 
 import com.joshuacrotts.quine.model.treenode.WffTree;
 

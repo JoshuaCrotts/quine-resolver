@@ -107,11 +107,12 @@ public final class QuineTree {
     private void evaluateWffHelper(WffTree _wffTree) {
         for (int i = 0; i < _wffTree.getChildrenSize(); i++) {
             WffTree ch = _wffTree.getChild(i);
-            if (ch.isAnd()) { this.evaluateConjunction(i, _wffTree, ch); }
+            if (ch.isNegation()) { this.evaluateNegation(i, _wffTree, ch); }
+            else if (ch.isAnd()) { this.evaluateConjunction(i, _wffTree, ch); }
             else if (ch.isOr()) { this.evaluateDisjunction(i, _wffTree, ch); }
             else if (ch.isImp()) { this.evaluateImplication(i, _wffTree, ch); }
             else if (ch.isBicond()) { this.evaluateBiconditional(i, _wffTree, ch); }
-            else if (ch.isNegation()) { this.evaluateNegation(i, _wffTree, ch); }
+
             this.evaluateWffHelper(ch);
         }
     }
@@ -163,7 +164,7 @@ public final class QuineTree {
         if (_impTree.getChild(0).isFalse()) {
             _parent.setChild(_idx, new TruthNode());
         }
-        // Anything impies true is true or the lhs is true (we do the same thing).
+        // Anything imp;ies true is true or the lhs is true (we do the same thing).
         else if (_impTree.getChild(0).isTrue() || _impTree.getChild(1).isTrue()){
             _parent.setChild(_idx, _impTree.getChild(1));
         }
@@ -196,7 +197,7 @@ public final class QuineTree {
             if (lhs.isTrue()) { _parent.setChild(_idx, rhs); }
             else if (rhs.isTrue()) { _parent.setChild(_idx, lhs); }
             else if (lhs.isFalse()) { _parent.setChild(_idx, new NegNode(rhs)); }
-            else { _parent.setChild(_idx, new NegNode(lhs)); }
+            else if (rhs.isFalse()) { _parent.setChild(_idx, new NegNode(lhs)); }
         }
     }
 
@@ -318,6 +319,36 @@ public final class QuineTree {
         if (_quineTree.getRightQuineTree() != null) { this.printQuineTreeHelper(_quineTree.getRightQuineTree(), sb); }
     }
 
+    public String getTexQuineTree() {
+        StringBuilder sb = new StringBuilder("[" + this.wffTree.getTexCommand());
+        this.getTexQuineTreeHelper(this, sb);
+        sb.append("]");
+        return sb.toString();
+    }
+
+    private void getTexQuineTreeHelper(QuineTree _quineTree, StringBuilder _sb) {
+        if (_quineTree == null) { return; }
+
+        // If the toString() is not null then we can do stuff.
+        if (_quineTree.toString() != null) {
+            _sb.append("[");
+            _sb.append(_quineTree.truthifiedWffTree.getTexCommand());
+            _sb.append("[");
+            _sb.append(_quineTree.wffTree.getTexCommand());
+            _sb.append("\n");
+        }
+
+        // Recurse on the left and right.
+        if (_quineTree.getLeftQuineTree() != null) { this.getTexQuineTreeHelper(_quineTree.getLeftQuineTree(), _sb); }
+        if (_quineTree.getRightQuineTree() != null) { this.getTexQuineTreeHelper(_quineTree.getRightQuineTree(), _sb); }
+
+        // If there's something to print, we need to add the closing brackets.
+        if (_quineTree.toString() != null) {
+            _sb.append("] ");
+            _sb.append("] ");
+        }
+    }
+
     @Override
     public String toString() {
         if (this.depth <= 0 || this.atomNode == null) { return null; }
@@ -327,6 +358,11 @@ public final class QuineTree {
                 this.interpretation,
                 this.truthifiedWffTree.getStringRep(),
                 this.wffTree.getStringRep());
+    }
+
+    public String toTexString() {
+        if (this.depth <= 0 || this.atomNode == null) { return null; }
+        return this.wffTree.getTexCommand();
     }
 
     public WffTree getInterpretationNode() {

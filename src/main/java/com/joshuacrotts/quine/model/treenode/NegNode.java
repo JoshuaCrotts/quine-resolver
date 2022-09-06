@@ -15,7 +15,12 @@ public class NegNode extends WffTree {
      * The default TeX symbol is the tilde, but because it is difficult
      * to produce correctly, we had to make a custom definition for it.
      */
-    private static final String DEFAULT_TEX_SYMBOL = "\\varlnot";
+    private static final String DEFAULT_TEX_SYMBOL = "-";
+
+    /**
+     *
+     */
+    private static final String ATOM_TEX_SYMBOL = "\\bar";
 
     /**
      * Keeps track of the symbol currently used. Whatever symbol is last used
@@ -62,7 +67,8 @@ public class NegNode extends WffTree {
     @Override
     public String getTexCommand() {
         WffTree ch1 = this.getChild(0);
-        return DEFAULT_TEX_SYMBOL + " " + ch1.getTexCommand();
+        if (ch1.isAtom()) { return ATOM_TEX_SYMBOL + "{" + ch1.getTexCommand() + "}"; }
+        else { return DEFAULT_TEX_SYMBOL + ch1.getTexCommand(); }
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.joshuacrotts.quine.model.treenode;
 
-import com.joshuacrotts.quine.TexPrinter;
-
 /**
  *
  */
@@ -35,7 +33,7 @@ public class AtomNode extends WffTree {
 
     @Override
     public String getTexCommand() {
-        return TexPrinter.removeMathMode(this.getSymbol());
+        return this.getSymbol();
     }
 
     @Override

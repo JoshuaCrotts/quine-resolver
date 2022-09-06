@@ -1,6 +1,6 @@
 package com.joshuacrotts.quine.model.treenode;
 
-import com.joshuacrotts.quine.TexPrintable;
+import com.joshuacrotts.quine.output.TexPrintable;
 import com.joshuacrotts.quine.utils.QuineUtils;
 
 import java.util.ArrayList;

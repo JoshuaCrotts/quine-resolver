@@ -13,10 +13,9 @@ public class BicondNode extends WffTree {
     private static final String DEFAULT_SYMBOL = "↔";
 
     /**
-     * The default TeX symbol is a custom symbol I made. It's just
-     * the double arrow but it looks a little cleaner.
+     * The default TeX symbol is just leftrightarrow.
      */
-    private static final String DEFAULT_TEX_SYMBOL = "\\varliff";
+    private static final String DEFAULT_TEX_SYMBOL = "\\leftrightarrow";
 
     /**
      * Keeps track of the symbol currently used. Whatever symbol is last used

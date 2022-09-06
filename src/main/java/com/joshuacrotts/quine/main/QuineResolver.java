@@ -1,5 +1,7 @@
 package com.joshuacrotts.quine.main;
 
+import com.joshuacrotts.quine.output.PdfPrinter;
+import com.joshuacrotts.quine.output.PdfQuineTreePrinter;
 import com.joshuacrotts.quine.model.QuineTree;
 import com.joshuacrotts.quine.model.treenode.WffTree;
 import com.joshuacrotts.quine.parser.QuineParserAdapter;
@@ -23,13 +25,26 @@ public class QuineResolver {
             WffTree tree = QuineParserAdapter.getAbstractSyntaxTree(args[idx + 1]);
             if (tree != null) {
                 QuineTree qt = new QuineTree(tree, tree.getAtoms());
-                System.out.println(qt.printQuineTree());
+                if (ArgParser.isArgPresent("-c", args)) {
+                    System.out.println(qt.printQuineTree());
+                }
+                if (ArgParser.isArgPresent("-p", args)) {
+                    int pdfIdx = ArgParser.getArgIndex("-p", args);
+                    String outFileName = args[pdfIdx + 1];
+                    if (!outFileName.endsWith("pdf")) {
+                        ArgParser.printErrorAndExit("Output file to -p must be a pdf file, but got " + outFileName);
+                    } else {
+                        PdfPrinter printer = new PdfQuineTreePrinter(qt, outFileName);
+                        printer.outputToFile();
+                        System.out.printf("Successfully output quine tree to PDF %s\n", outFileName);
+                    }
+                }
             }
         }
     }
 
     private static void printQuineResolverHelp() {
-        System.out.println("'quine-resolver' is a program to evaluate a propositional logic");
+        System.out.println("About: 'quine-resolver' is a program to evaluate a propositional logic");
         System.out.println("schema or well-formed formula with Quine's method of truth-value analysis.");
         System.out.println("");
         System.out.println("Schema use any upper or lower-case letters, e.g., p or P. Connectives are as follows:");
@@ -40,5 +55,8 @@ public class QuineResolver {
         System.out.printf("\tExclusive-Or: '%s' | '%s' | '%s' | '%s' | '%s' | '%s'\n", '⊕', '⊻', '≢', '⩒', '↮', "XOR");
         System.out.printf("\tNegation: '%s' | '%s' | '%s' | '%s' | '%s' | '%s' | '%s' | '%s'\n", '˜', '\u007e', '\uff5e', '\u223c', '¬', '!', '-', "NOT");
         System.out.println();
+        System.out.println("All binary operators must have parentheses, unless they are part of the outermost expression.");
+        System.out.println("\tEx: '(p → q → r) → p' is disallowed, but '((p → q) → r) → p' is valid.");
+        System.out.println("");
     }
 }

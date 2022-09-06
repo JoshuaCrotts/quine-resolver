@@ -1,7 +1,5 @@
 package com.joshuacrotts.quine.model.treenode;
 
-import com.joshuacrotts.quine.TexPrinter;
-
 /**
  *
  */
@@ -35,7 +33,7 @@ public class FalseNode extends WffTree {
 
     @Override
     public String getTexCommand() {
-        return TexPrinter.removeMathMode(FalseNode.DEFAULT_TEX_SYMBOL);
+        return FalseNode.DEFAULT_TEX_SYMBOL;
     }
 
     @Override

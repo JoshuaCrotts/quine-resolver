@@ -1,4 +1,4 @@
-package com.joshuacrotts.quine;
+package com.joshuacrotts.quine.output;
 
 public interface TexPrintable {
 

@@ -9,16 +9,16 @@ package com.joshuacrotts.quine.model.treenode;
 public class AndNode extends WffTree {
 
     /**
-     * Uses the ampersand (&) as the default symbol if none is provided.
+     * Uses the inverted wedge (∧) as the default symbol if none is provided.
      * This should, ideally, only happen in internal algorithms.
      */
-    private static final String DEFAULT_SYMBOL = "&";
+    private static final String DEFAULT_SYMBOL = "∧";
 
     /**
      * The default TeX symbol is the ampersand, but defined in a mathbin
      * environment so it can be read in the forest env.
      */
-    private static final String DEFAULT_TEX_SYMBOL = "\\mathbin{\\&}";
+    private static final String DEFAULT_TEX_SYMBOL = "\\land";
 
     /**
      * Keeps track of the symbol currently used. Whatever symbol is last used
