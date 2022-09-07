@@ -2,9 +2,7 @@ package com.joshuacrotts.quine.model;
 
 import com.joshuacrotts.quine.model.treenode.*;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public final class QuineTree {
 
@@ -61,7 +59,7 @@ public final class QuineTree {
             this.atomNodeList = _atomNodeList;
             this.interpretation = _interpretation;
             this.depth = _depth;
-            this.atomNode = this.atomNodeList.get(0);
+            this.atomNode = this.findAtomToSearch();
             this.replaceAtoms();
             this.truthifiedWffTree = this.wffTree.copy();
             this.evaluateQuineTree();
@@ -162,17 +160,11 @@ public final class QuineTree {
      */
     private void evaluateImplication(int _idx, WffTree _parent, WffTree _impTree) {
         // False implies anything is true.
-        if (_impTree.getChild(0).isFalse()) {
-            _parent.setChild(_idx, new TruthNode());
-        }
-        // Anything imp;ies true is true or the lhs is true (we do the same thing).
-        else if (_impTree.getChild(0).isTrue() || _impTree.getChild(1).isTrue()){
-            _parent.setChild(_idx, _impTree.getChild(1));
-        }
+        if (_impTree.getChild(0).isFalse()) { _parent.setChild(_idx, new TruthNode()); }
+        // Anything implies true is true or the lhs is true (we do the same thing).
+        else if (_impTree.getChild(0).isTrue() || _impTree.getChild(1).isTrue()){ _parent.setChild(_idx, _impTree.getChild(1)); }
         // A implies false is ~A
-        else if (_impTree.getChild(1).isFalse()) {
-            _parent.setChild(_idx, new NegNode(_impTree.getChild(0)));
-        }
+        else if (_impTree.getChild(1).isFalse()) { _parent.setChild(_idx, new NegNode(_impTree.getChild(0))); }
     }
 
     /**
@@ -233,6 +225,7 @@ public final class QuineTree {
     private ArrayList<AtomNode> getNewAtoms() {
         ArrayList<AtomNode> newAtoms = new ArrayList<>();
         for (int i = 1; i < this.atomNodeList.size(); i++) { newAtoms.add(this.atomNodeList.get(i)); }
+        newAtoms.sort(Comparator.comparing(AtomNode::getStringRep));
         return newAtoms;
     }
 
@@ -251,6 +244,26 @@ public final class QuineTree {
 
             this.replaceAtomsHelper(ch);
         }
+    }
+
+    /**
+     * Searches through the formula to find instances of atoms to replace with
+     * true/false. If there is no occurrence of some atom, then we simply skip to the next
+     * atom to check for that interpretation. If we run out of variables and the formula
+     * still is not resolved, then something is wrong.
+     *
+     * @return AtomNode to search for.
+     * @throws IllegalStateException when there are no atoms remaining in the list and the formula
+     *         is still unresolved.
+     */
+    private AtomNode findAtomToSearch() {
+        // If the atom isn't present in the wff, just skip over it.
+        for (AtomNode node : this.atomNodeList) {
+            if (this.wffTree.getStringRep().contains(node.getStringRep())) {
+                return node;
+            }
+        }
+        throw new IllegalStateException("Can't find any atoms to search... this should never happen.");
     }
 
     /**
